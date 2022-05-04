@@ -1,0 +1,92 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.2;
+
+/*
+ * Sources:
+ *  - https://github.com/alxrnz2/ERC1155-with-EIP2981-for-OpenSea/blob/main/contracts/ParkPics.sol
+ *  - https://docs.openzeppelin.com/contracts/4.x/wizard
+ * 
+ * Features:
+ *  - Pausible by owner for security
+ *  - OpenSea interoperability
+ *  - Royalty support for future proofing  (uses 10%)
+ *  - IPFS based metadata
+ */
+
+import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
+import "@openzeppelin/contracts/interfaces/IERC2981.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+
+/// @custom:security-contact developer@idz.com
+contract IDZ_OLD is ERC1155, IERC2981, Ownable, Pausable {
+    using Strings for uint256;
+    string public name;
+    string public symbol;
+    uint256 public total_supply;
+    address private _recipient;
+
+    constructor() ERC1155("") {
+        name = "Asset 0";
+        symbol = "IDZ";
+        total_supply = 50000;
+        _recipient = owner();
+    }
+
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
+    /*
+    * Added by openzeppelin wizard to handle pause functionality
+    */
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal override whenNotPaused {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+    }
+
+    /** @dev URI override for OpenSea traits compatibility. */
+
+    function uri(uint256 tokenId) public view override returns (string memory) {
+        // Tokens minted above the supply cap will not have associated metadata.
+        require(
+            tokenId >= 1 && tokenId <= total_supply,
+            "ERC1155Metadata: URI query for nonexistent token"
+        );
+        return
+            string(
+                abi.encodePacked(_uriBase, Strings.toString(tokenId), ".json")
+            );
+    }
+
+    /** @dev EIP2981 royalties implementation. */
+
+    // Maintain flexibility to modify royalties recipient (could also add basis points).
+    function _setRoyalties(address newRecipient) internal {
+        require(
+            newRecipient != address(0),
+            "Royalties: new recipient is the zero address"
+        );
+        _recipient = newRecipient;
+    }
+
+
+    /** @dev Contract-level metadata for OpenSea. */
+
+    // Update for collection-specific metadata.
+    function contractURI() public pure returns (string memory) {
+        return
+            "ipfs://bafkreigpykz4r3z37nw7bfqh7wvly4ann7woll3eg5256d2i5huc5wrrdq"; // Contract-level metadata for IDZ
+    }
+}

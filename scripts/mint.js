@@ -22,7 +22,6 @@ task("mint", "Mints from the IDZ contract")
 //     console.log(`Transaction Hash: ${transactionResponse.hash}`);
 // });
 
-
 task("token-uri", "Fetches the token metadata for the given token ID")
 .addParam("tokenId", "The tokenID to fetch metadata for")
 .setAction(async function (taskArguments, hre) {
@@ -36,4 +35,18 @@ task("token-uri", "Fetches the token metadata for the given token ID")
 
     const metadata = await fetch(metadata_url).then(res => res.json());
     console.log(`Metadata fetch response: ${JSON.stringify(metadata, null, 2)}`);
+});
+
+task("pause", "Pauses the IDZ contract")
+.setAction(async function (taskArguments, hre) {
+    const contract = await getContract("IDZ", hre);
+    const response = await contract.pause();
+    console.log(`Contract pause result: ${JSON.stringify(response, null, 2)}`);
+});
+
+task("unpause", "Unpauses the IDZ contract")
+.setAction(async function (taskArguments, hre) {
+    const contract = await getContract("IDZ", hre);
+    const response = await contract.unpause();
+    console.log(`Contract unpause result: ${JSON.stringify(response, null, 2)}`);
 });
