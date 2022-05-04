@@ -1,0 +1,9 @@
+node_modules
+
+# hardhat
+cache
+artifacts
+
+#environment
+secrets.json
+.env
