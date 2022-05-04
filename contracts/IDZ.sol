@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 
 contract IDZ is ERC1155, Ownable {
     uint256 public constant ASSET0 = 1;
+    string public name = "ASSET0";
 
     constructor()
         ERC1155(
@@ -24,7 +25,7 @@ contract IDZ is ERC1155, Ownable {
 
     function uri(uint256 tokenId) override public pure returns (string memory) {
         // Tokens minted above the supply cap will not have associated metadata.
-        require(tokenId >= 1 && tokenId < 50000, "ERC1155Metadata: URI query for nonexistent token");
+        require(tokenId >= 1 && tokenId <= 50000, "ERC1155Metadata: URI query for nonexistent token");
         return string(abi.encodePacked("https://bafybeigohx3ya3zy2qchhjwdmamrin2wx76phr5f5x66ryliz5g7654w5i.ipfs.nftstorage.link/metadata/", Strings.toString(tokenId), ".json"));
     }
     /*
