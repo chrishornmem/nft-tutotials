@@ -6,7 +6,7 @@ task("mint", "Mints from the IDZ contract")
 .addParam("address", "The address to receive a token")
 .setAction(async function (taskArguments, hre) {
     const contract = await getContract("IDZ", hre);
-    const transactionResponse = await contract.mintTo(taskArguments.address, {
+    const transactionResponse = await contract.mint(taskArguments.address, 0 , 50000, {
         gasLimit: 500_000,
     });
     console.log(`Transaction Hash: ${transactionResponse.hash}`);

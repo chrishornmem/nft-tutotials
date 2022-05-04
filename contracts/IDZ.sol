@@ -9,7 +9,7 @@ contract IDZ is ERC1155, Ownable {
 
     constructor()
         ERC1155(
-            "https://bafybeiflvp7bbbsptj7tnya3b2ta5d5l7mm5on3yl74nzxxd4erv7ff5fu.ipfs.nftstorage.link/metadata/${id}"
+            "https://bafybeiflvp7bbbsptj7tnya3b2ta5d5l7mm5on3yl74nzxxd4erv7ff5fu.ipfs.nftstorage.link/metadata/${id}.json"
         )
     {
         _mint(msg.sender, ASSET0, 50000, "");
