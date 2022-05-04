@@ -4,11 +4,10 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract ASSET0 is ERC1155, Ownable {
+contract IDZ is ERC1155, Ownable {
     uint256 public constant ASSET0 = 0;
 
     constructor()
-        public
         ERC1155(
             "https://bafybeiflvp7bbbsptj7tnya3b2ta5d5l7mm5on3yl74nzxxd4erv7ff5fu.ipfs.nftstorage.link/metadata/${id}"
         )
