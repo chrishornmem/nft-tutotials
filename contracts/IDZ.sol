@@ -1,78 +1,68 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+contract IDZ is
+    Ownable,
+    ERC721Enumerable,
+    ERC721Burnable
+{
+    event PermanentURI(string _value, uint256 indexed _id);
 
-/*
- * Sources:
- *  - https://github.com/alxrnz2/ERC1155-with-EIP2981-for-OpenSea/blob/main/contracts/ParkPics.sol
- *  - https://docs.openzeppelin.com/contracts/4.x/wizard
- * 
- * Features:
- *  - Pausible by owner for security
- *  - OpenSea interoperability
- *  - IPFS based metadata
- *  - not mintable
- */
-
-import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
-
-contract IDZ is ERC1155, Ownable, Pausable {
-    uint256 public constant ASSET0 = 1;
-    string public constant name = "ASSET0";
-
-    constructor()
-        ERC1155(
-            "https://bafybeigohx3ya3zy2qchhjwdmamrin2wx76phr5f5x66ryliz5g7654w5i.ipfs.nftstorage.link/metadata/${id}.json"
-        )
-    {
-        _mint(msg.sender, ASSET0, 50000, "");
+    constructor() ERC721("CryptoPandaz", "CRYPA") {
     }
 
-    function pause() public onlyOwner {
-        _pause();
+    function mint() public onlyOwner {
+      uint256 totalSupply = totalSupply();
+      require (totalSupply < 10000);
+      for (uint256 i = totalSupply; i < totalSupply + 100; i++) {
+          _mint(owner(), i);
+          string memory _tokenURI = super.tokenURI(i);
+          emit PermanentURI(_tokenURI, i);
+      }
     }
 
-    function unpause() public onlyOwner {
-        _unpause();
+    function contractURI() public pure returns (string memory) {
+        return "https://nfts-326700.uc.r.appspot.com/";
     }
 
-    /*
-    * Added by openzeppelin wizard to handle pause functionality
-    */
+    function _baseURI() override internal view virtual returns (string memory) {
+        return "https://nfts-326700.uc.r.appspot.com/api/token/";
+    }
+
     function _beforeTokenTransfer(
-        address operator,
         address from,
         address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal override whenNotPaused {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+        uint256 serialId
+    ) internal virtual override(ERC721, ERC721Enumerable) {
+        super._beforeTokenTransfer(from, to, serialId);
     }
 
-    /** @dev URI override for OpenSea traits compatibility. */
-
-    function uri(uint256 tokenId) override public pure returns (string memory) {
-        // Tokens minted above the supply cap will not have associated metadata.
-        require(tokenId >= 1 && tokenId <= 50000, "ERC1155Metadata: URI query for nonexistent token");
-        return string(abi.encodePacked("https://bafybeigohx3ya3zy2qchhjwdmamrin2wx76phr5f5x66ryliz5g7654w5i.ipfs.nftstorage.link/metadata/", Strings.toString(tokenId), ".json"));
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC721, ERC721Enumerable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
-    /*
-     * Override isApprovedForAll to auto-approve OS's proxy contract
-     */
+
     function isApprovedForAll(address _owner, address _operator)
         public
         view
         override
         returns (bool isOperator)
     {
-        // if OpenSea's ERC1155 Proxy Address is detected, auto-return true
-        if (_operator == address(0x207Fa8Df3a17D96Ca7EA4f2893fcdCb78a304101)) {
+        // if OpenSea's ERC721 Proxy Address is detected, auto-return true
+        if (_operator == address(0x58807baD0B376efc12F5AD86aAc70E78ed67deaE)) {
             return true;
         }
-        // otherwise, use the default ERC1155.isApprovedForAll()
-        return ERC1155.isApprovedForAll(_owner, _operator);
+
+        // otherwise, use the default ERC721.isApprovedForAll()
+        return ERC721.isApprovedForAll(_owner, _operator);
+    }
+
+    /**
+     * This is used instead of msg.sender as transactions won't be sent by the original token owner, but by OpenSea.
+     */
+    function _msgSender() internal view override returns (address sender) {
+        return ContextMixin.msgSender();
     }
 }
