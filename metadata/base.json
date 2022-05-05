@@ -1,1 +1,7 @@
-{"name":"Pandas","description":"Pandas are adorable pandas. Adopt one today to make us reach. Jump on the NFT bandwagon and get your own Panda!","image":"https://storage.googleapis.com/nft-pandas/panda-0.png","seller_fee_basis_points":100,"fee_recipient":"0xA97F337c39cccE66adfeCB2BF99C1DdC54C2D721"}
+{
+  "name": "Asset 0",
+  "description": "The first asset in the ID ecosystem",
+  "image": "https://bafybeifwz47rimaxo7xcm7pasycoivl4uczmuq7iuk2wby6gwx5k6qil64.ipfs.nftstorage.link/images/1.png",
+  "seller_fee_basis_points": 100,
+  "fee_recipient": "0x284959745517a4D2f1bb473f7D3dF4F2a80F6c53"
+}
